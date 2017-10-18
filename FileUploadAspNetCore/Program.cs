@@ -19,6 +19,7 @@ namespace FileUploadAspNetCore
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .UseUrls("http://+:3434")
                 .UseStartup<Startup>()
                 .Build();
     }
