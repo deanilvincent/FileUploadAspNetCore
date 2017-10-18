@@ -5,33 +5,41 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using FileUploadAspNetCore.Models;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Hosting;
+using System.IO;
 
 namespace FileUploadAspNetCore.Controllers
 {
     public class HomeController : Controller
     {
+        private IHostingEnvironment envhosting;
+
+        public HomeController(IHostingEnvironment envhosting)
+        {
+            this.envhosting = envhosting;
+        }
+
         public IActionResult Index()
         {
             return View();
         }
 
-        public IActionResult About()
+        public async Task<IActionResult> ImportFile(IFormFile file)
         {
-            ViewData["Message"] = "Your application description page.";
+            if (file != null)
+            {
+                var uploadPath = Path.Combine(envhosting.WebRootPath, "uploads");
 
-            return View();
-        }
+                using (var fileStream = new FileStream(Path.Combine(uploadPath, file.FileName), FileMode.Create))
+                {
+                    await file.CopyToAsync(fileStream);
+                }
 
-        public IActionResult Contact()
-        {
-            ViewData["Message"] = "Your contact page.";
+                // check the uploads folder
+            }
 
-            return View();
-        }
-
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return RedirectToAction("Index");
         }
     }
 }
