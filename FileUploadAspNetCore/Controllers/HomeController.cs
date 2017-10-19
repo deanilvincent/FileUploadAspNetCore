@@ -8,6 +8,7 @@ using FileUploadAspNetCore.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
+using FileUploadAspNetCore.Variables;
 
 namespace FileUploadAspNetCore.Controllers
 {
@@ -22,7 +23,22 @@ namespace FileUploadAspNetCore.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            var fileDetails = new List<FileDetails>();
+
+            var directoryFiles = Directory.GetFiles("wwwroot/uploadsfolder");
+
+            foreach (var item in directoryFiles)
+            {
+                string exactFileName = item.Replace("wwwroot/uploadsfolder\\", "");
+
+                fileDetails.Add(new FileDetails
+                {
+                    Filename = exactFileName,
+                    FullPath = "/Uploads/" + exactFileName
+                });
+            }
+
+            return View(fileDetails);
         }
 
         public async Task<IActionResult> ImportFile(IFormFile file)
@@ -33,7 +49,7 @@ namespace FileUploadAspNetCore.Controllers
             {
                 await file.CopyToAsync(fileStream);
             }
-            return View("Index");
+            return RedirectToAction("Index");
         }
     }
 }

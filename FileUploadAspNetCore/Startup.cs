@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
+using Microsoft.AspNetCore.Http;
 
 namespace FileUploadAspNetCore
 {
@@ -47,6 +50,20 @@ namespace FileUploadAspNetCore
 
             app.UseStaticFiles();
 
+            // accessing files inside the wwwroot
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot", "uploadsfolder")),
+                RequestPath = new PathString("/Uploads")
+            });
+
+            app.UseDirectoryBrowser(new DirectoryBrowserOptions()
+            {
+                FileProvider = new PhysicalFileProvider(
+            Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot", "uploadsfolder")),
+                RequestPath = new PathString("/Uploads")
+            });
+            
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

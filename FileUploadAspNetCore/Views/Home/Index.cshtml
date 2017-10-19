@@ -1,4 +1,5 @@
-﻿@{
+﻿@model IEnumerable<FileUploadAspNetCore.Variables.FileDetails>
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -15,3 +16,15 @@
        </div>
    </div>
 }
+
+<table>
+    <tr>
+        <th>File path</th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td><a href="@item.FullPath">@item.Filename</a></td>
+        </tr>
+    }
+</table>
